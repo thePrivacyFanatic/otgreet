@@ -1,0 +1,16 @@
+[package]
+name = "otgreet"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+greetd_ipc = { version = "0.10.3", features = ["sync-codec"] }
+ratatui = { version = "0.30.2", default-features = false, features = [
+  "crossterm",
+  "unstable"
+] }
+color-eyre = "0.6.5"
+tokio = { version = "1.53.1", features = ["macros", "rt-multi-thread", "rt", "time"] }
+tokio-stream = "0.1.19"
+crossterm = { version = "0.29.0", features = ["event-stream"] }
+totp-rs = {version = "*", features = ["otpauth", "gen_secret"]}
