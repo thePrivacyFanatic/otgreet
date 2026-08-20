@@ -5,6 +5,7 @@ use std::{
     io::{BufRead, BufReader},
     os::unix::net::UnixStream,
     path::{Path, PathBuf},
+    process::Command,
 };
 
 use color_eyre::eyre::{Error, Result};
@@ -216,11 +217,13 @@ impl Auth {
     }
 
     fn poweroff() -> Result<()> {
-        todo!()
+        Command::new("/bin/loginctl").arg("poweroff").spawn()?;
+        Ok(())
     }
 
     fn restart() -> Result<()> {
-        todo!()
+        Command::new("/bin/loginctl").arg("reboot").spawn()?;
+        Ok(())
     }
 }
 
