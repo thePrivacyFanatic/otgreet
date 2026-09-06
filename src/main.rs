@@ -270,6 +270,7 @@ impl App {
         }));
         #[cfg(not(debug_assertions))]
         conn.expect("failed to connect to greetd!");
+        #[cfg(debug_assertions)]
         drop(conn);
 
         while !matches!(self.auth.status, AuthStatus::Completed) {
