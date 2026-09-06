@@ -18,5 +18,5 @@ build() {
 }
 
 package() {
-  install "$srcdir/otgreet/target/release/otgreet" "$pkgdir/usr/bin/otgreet"
+  install -Dm755 "$srcdir/otgreet/target/release/otgreet" "$pkgdir/usr/bin/otgreet"
 }
