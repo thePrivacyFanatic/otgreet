@@ -24,7 +24,10 @@ use ratatui::{
     text::Span,
     widgets::{Block, Gauge, Padding, Paragraph},
 };
-use tokio::time::{Duration, Instant, sleep_until};
+use tokio::{
+    signal::unix::{SignalKind, signal},
+    time::{Duration, Instant, sleep_until},
+};
 use tokio_stream::{self, StreamExt};
 use totp_rs::{Builder, Totp};
 
@@ -277,15 +280,21 @@ impl App {
         conn.expect("failed to connect to greetd!");
         #[cfg(debug_assertions)]
         drop(conn);
+        let mut sig = signal(SignalKind::terminate()).ok();
 
         while !matches!(self.auth.status, AuthStatus::Completed) {
             tokio::select! {
-            _ = interval.tick() => { terminal.draw(|frame| self.render(frame))?; },
-            Some(Ok(event)) = events.next() => self.handle_event(&event),
-            _ = sleep_until(self.otp.next) => self.otp.update(),
-            _ = tokio::signal::ctrl_c() => return Ok(()),
-
-            }
+                    _ = interval.tick() => { terminal.draw(|frame| self.render(frame))?; },
+                    Some(Ok(event)) = events.next() => self.handle_event(&event),
+                    _ = sleep_until(self.otp.next) => self.otp.update(),
+                    _ = async {
+                if let Some(sigterm) = sig.as_mut() {
+                    sigterm.recv().await;
+                } else {
+                    std::future::pending::<()>().await;
+                }
+            } => return Ok(())
+                    }
         }
         self.auth.start_session(&self.sessions[self.session])?;
         Ok(())
