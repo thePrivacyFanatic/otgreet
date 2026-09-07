@@ -283,6 +283,8 @@ impl App {
             _ = interval.tick() => { terminal.draw(|frame| self.render(frame))?; },
             Some(Ok(event)) = events.next() => self.handle_event(&event),
             _ = sleep_until(self.otp.next) => self.otp.update(),
+            _ = tokio::signal::ctrl_c() => return Ok(()),
+
             }
         }
         self.auth.start_session(&self.sessions[self.session])?;
