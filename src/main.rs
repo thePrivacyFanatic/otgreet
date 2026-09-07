@@ -26,7 +26,7 @@ use ratatui::{
 };
 use tokio::time::{Duration, Instant, sleep_until};
 use tokio_stream::{self, StreamExt};
-use totp_rs::Totp;
+use totp_rs::{Builder, Totp};
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -45,7 +45,12 @@ async fn main() -> Result<()> {
 }
 
 fn init() -> Result<()> {
-    match Totp::default().to_url() {
+    match Builder::default()
+        .with_account_name("otgreet")
+        .build()
+        .unwrap()
+        .to_url()
+    {
         Ok(url) => {
             fs::write("/etc/greetotp", &url)?;
             println!("generated url is: {}", url);
