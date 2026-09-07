@@ -1,15 +1,28 @@
 # otgreet
-a greeter with the same features of [tpm2-totp](https://github.com/tpm2-software/tpm2-totp), but for auto-unlock setups.
 
-this is more of a proof-of-concept, modern UEFI secure boot is absolutely horrible at resisting attack vectors by itself, with [the well though-out solutions](https://github.com/linuxboot/heads) already having this as a feature (though I do not know of an auto-unlock method for this), and replacements such as intel TXT are too badly documented to practically set up.
+A greeter for auto-unlock AEM setups.
+For manual unlock there's [tpm2-totp](https://github.com/tpm2-software/tpm2-totp).
 
+Disclaimer: this is more of a proof-of-concept,
+modern UEFI secure boot is absolutely horrible at resisting sophisticated
+attacks by itself, while [the well though-out solutions](https://github.com/linuxboot/heads)
+already have this as a feature (though non are auto-unlock as of now for simplicity),
+and hardware-security-enforcing DRTM loaders like [tboot](https://sourceforge.net/projects/tboot/)
+have almost no documentation.
 
-basically I would only treat this as a serious project when an actual threat model has a use for this.
-until then expect the stub error handeling and lack of support for AEM USB drives.
+I would only treat this as a serious project when an actual threat model uses this.
+Until then expect the lack of support for AEM USB drives and for qr code generation.
 
 ## building
-clone the repo, then run `make install` to build and install to `/usr/bin`
+
+On arch download the PKGBUILD into an empty directory and run `makepkg -si` in it
+
+Otherwise clone the repo, then run `make install` to build and install to `/usr/bin`
 
 ## usage
-running `otgreet init` creates a TOTP secret at `/etc/greetotp` and prints it
-running `otgreet` otherwise just displays the UI (the reboot and shutdown functions currently require logind)
+
+Running `otgreet init` creates a TOTP secret at `/etc/greetotp` and prints the
+otpauth url to stdout
+
+Running `otgreet greet` displays the UI when using a debug build, release builds
+panic without a greetd socket to connect to

@@ -37,13 +37,17 @@ async fn main() -> Result<()> {
     if let Some(arg) = env::args().nth(1) {
         match arg.as_str() {
             "init" => init(),
+            "greet" => {
+                let terminal = ratatui::init();
+                let app_result = App::default().run(terminal).await;
+                ratatui::restore();
+                app_result
+            }
+
             _ => help(),
         }
     } else {
-        let terminal = ratatui::init();
-        let app_result = App::default().run(terminal).await;
-        ratatui::restore();
-        app_result
+        help()
     }
 }
 
